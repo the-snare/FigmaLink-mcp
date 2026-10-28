@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write   # OIDC for npm trusted publishing
 
 concurrency:
   group: npm-publish
@@ -29,7 +30,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: https://registry.npmjs.org
           cache: npm
           cache-dependency-path: bridge/package-lock.json
@@ -68,17 +69,11 @@ jobs:
 
       - name: Publish
         working-directory: bridge
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ "$DRY_RUN" = "true" ]; then
             npm publish --access public --dry-run
             exit 0
           fi
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "::error::NPM_TOKEN secret is not set (Settings -> Secrets and variables -> Actions)"
-            exit 1
-          fi
-          # No --provenance: this repository is private, and provenance requires a
-          # public source repository. Add it back if the repo is made public.
+          # Authentication comes from the GitHub OIDC token exchanged with the npm
+          # trusted publisher. No NPM_TOKEN and no --provenance (this repo is private).
           npm publish --access public
