@@ -1,0 +1,88 @@
+name: Release extension
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to package, e.g. v0.26.0'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-extension
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Resolve and verify versions
+        id: version
+        env:
+          TAG_NAME: ${{ inputs.tag || github.ref_name }}
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const manifest = JSON.parse(fs.readFileSync('extension/manifest.json', 'utf8'));
+          const bridge = JSON.parse(fs.readFileSync('bridge/package.json', 'utf8'));
+          const consts = fs.readFileSync('extension/lib/const.js', 'utf8');
+          const version = manifest.version;
+          const tag = process.env.TAG_NAME.replace(/^v/, '');
+          const problems = [];
+          if (tag !== version) problems.push(`tag v${tag} != extension/manifest.json ${version}`);
+          if (bridge.version !== version) problems.push(`bridge/package.json ${bridge.version} != ${version}`);
+          if (!consts.includes(`BRIDGE_VERSION = '${version}'`)) problems.push('BRIDGE_VERSION mismatch');
+          if (!consts.includes(`EXECUTOR_REVISION = '${version}'`)) problems.push('EXECUTOR_REVISION mismatch');
+          if (problems.length) {
+            for (const problem of problems) console.error(`::error::${problem}`);
+            process.exit(1);
+          }
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\ntag=${process.env.TAG_NAME}\n`);
+          console.log(`packaging extension ${version}`);
+          NODE
+
+      - name: Build zip
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          ZIP="figmalink-extension-${VERSION}.zip"
+          (cd extension && zip -rq "../${ZIP}" manifest.json background content lib offscreen popup icons)
+          sha256sum "${ZIP}" > "${ZIP}.sha256"
+          unzip -l "${ZIP}"
+
+      - name: Create or update release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          ZIP="figmalink-extension-${VERSION}.zip"
+          cat > release-notes.md <<'EOF'
+          FigmaLink browser extension.
+
+          1. Download the zip and unzip it.
+          2. Open chrome://extensions, enable Developer mode, click "Load unpacked", and select the unzipped folder.
+          3. Open the extension popup, fill in the bridge URL and pairing token, then click Save and reconnect.
+
+          中文：下载 zip 解压，打开 chrome://extensions → 开发者模式 → 加载已解压的扩展程序，选择解压后的目录；然后在 popup 里填 bridge URL 和配对 token。
+          EOF
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$ZIP" "${ZIP}.sha256" --clobber
+          else
+            gh release create "$TAG" "$ZIP" "${ZIP}.sha256" \
+              --title "FigmaLink ${VERSION}" \
+              --notes-file release-notes.md \
+              --verify-tag
+          fi
