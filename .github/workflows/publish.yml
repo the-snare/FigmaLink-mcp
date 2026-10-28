@@ -92,6 +92,6 @@ jobs:
             npm publish --access public --dry-run
             exit 0
           fi
-          # Authentication comes from the GitHub OIDC token exchanged with the npm
-          # trusted publisher. No NPM_TOKEN and no --provenance (this repo is private).
+          # Authentication comes from GitHub OIDC exchanged with the npm trusted
+          # publisher. Provenance is generated automatically now that the repo is public.
           npm publish --access public
