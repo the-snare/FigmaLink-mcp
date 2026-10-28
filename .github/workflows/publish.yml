@@ -37,6 +37,22 @@ jobs:
           cache: npm
           cache-dependency-path: bridge/package-lock.json
 
+      - name: npm and OIDC diagnostics
+        run: |
+          node --version
+          npm --version
+          echo "registry: $(npm config get registry)"
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "OIDC request URL: present"
+          else
+            echo "OIDC request URL: MISSING"
+          fi
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]; then
+            echo "OIDC request token: present"
+          else
+            echo "OIDC request token: MISSING"
+          fi
+
       - name: Require main for manual runs
         if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
         run: |
