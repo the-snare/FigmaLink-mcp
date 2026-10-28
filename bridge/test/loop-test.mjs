@@ -12,6 +12,8 @@ const DIST = join(HERE, '..', 'dist', 'cli.js');
 const PORT = 8799;
 const TMP = join(HERE, 'tmp');
 const PAIRING = join(TMP, 'pairing.json');
+// A path outside FIGMALINK_IMPORT_ROOT; must work on Windows and Linux CI alike.
+const OUTSIDE = join(TMP, '..', 'outside-import-test.txt');
 
 mkdirSync(TMP, { recursive: true });
 if (existsSync(PAIRING)) rmSync(PAIRING);
@@ -27,7 +29,8 @@ const child = spawn(process.execPath, [DIST], {
     ...process.env,
     FIGMALINK_PORT: String(PORT),
     FIGMALINK_PAIRING_FILE: PAIRING,
-    FIGMALINK_OUT_DIR: join(TMP, 'out')
+    FIGMALINK_OUT_DIR: join(TMP, 'out'),
+    FIGMALINK_IMPORT_ROOT: TMP
   },
   stdio: ['pipe', 'pipe', 'pipe']
 });
@@ -546,7 +549,7 @@ try {
     && svgFromFile.result.reverted === undefined && svgFromFile.audit.revertRequested === false,
     JSON.stringify(svgFromFile.io));
 
-  const svgOutside = textOf(await toolCall('figma_import_svg', { path: 'C:/Windows/win.ini' }));
+  const svgOutside = textOf(await toolCall('figma_import_svg', { path: OUTSIDE }));
   check('import_svg 拒绝允许根目录外/非 .svg 的路径', svgOutside.ok === false
     && /必须落在允许根目录内|只接受 \.svg/.test(svgOutside.error || ''), svgOutside.error);
 
@@ -650,7 +653,7 @@ try {
   // spec comes back as a page error naming the exact field. Assert that contract instead
   // of pretending the schema is enforced.
 
-  const impOut = textOf(await toolCall('figma_import_image', { path: 'C:/Windows/win.ini' }));
+  const impOut = textOf(await toolCall('figma_import_image', { path: OUTSIDE }));
   check('import 拒绝允许根目录外的路径', impOut.ok === false && /必须落在允许根目录内/.test(impOut.error || ''), impOut.error);
 
   const impMiss = textOf(await toolCall('figma_import_image', { path: join(TMP, 'nope.txt') }));

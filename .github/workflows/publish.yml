@@ -1,0 +1,84 @@
+name: Publish npm
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '只跑 npm publish --dry-run，不真正发布'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      # Tag push publishes for real. A manual run defaults to dry-run so clicking the
+      # button cannot accidentally release a version.
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: bridge/package-lock.json
+
+      - name: Require main for manual runs
+        if: github.event_name == 'workflow_dispatch' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::manual publish must run from main"
+          exit 1
+
+      - name: Install
+        working-directory: bridge
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: bridge
+        run: npm run typecheck
+
+      - name: Test
+        working-directory: bridge
+        run: npm test
+
+      - name: Verify tag matches package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          node - <<'NODE'
+          const { readFileSync } = require('node:fs');
+          const version = JSON.parse(readFileSync('bridge/package.json', 'utf8')).version;
+          const tag = process.env.GITHUB_REF_NAME.replace(/^v/, '');
+          if (version !== tag) {
+            console.error(`::error::tag v${tag} != bridge/package.json ${version}`);
+            process.exit(1);
+          }
+          console.log(`publishing ${version}`);
+          NODE
+
+      - name: Publish
+        working-directory: bridge
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ "$DRY_RUN" = "true" ]; then
+            npm publish --access public --dry-run
+            exit 0
+          fi
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN secret is not set (Settings -> Secrets and variables -> Actions)"
+            exit 1
+          fi
+          # No --provenance: this repository is private, and provenance requires a
+          # public source repository. Add it back if the repo is made public.
+          npm publish --access public

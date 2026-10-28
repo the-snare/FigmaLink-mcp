@@ -209,6 +209,26 @@ npm start                # = node dist/cli.js
 npm run drive -- figma_read_tree '{"depth":2}'   # 直接调用在线 server
 ```
 
+### CI 与发布
+
+- `.github/workflows/ci.yml`：push / PR 到 `main` 时跑 `typecheck` + `npm test`
+- `.github/workflows/publish.yml`：推送 `v*` tag 时发布 npm；手动触发默认只做 `npm publish --dry-run`
+
+首次发布前：
+
+1. 确认 npm 包名可用（`figmalink-mcp` 当前未被占用）
+2. 在 GitHub → Settings → Secrets and variables → Actions 添加 `NPM_TOKEN`，值是 npm 的 Automation token，或带 publish 权限的 granular token
+3. 同步三处版本号：`bridge/package.json`、`extension/manifest.json`、`extension/lib/const.js`
+
+发版：
+
+```bash
+git tag v0.26.0
+git push origin v0.26.0
+```
+
+也可以手动触发 Publish workflow（默认 dry-run，确认无误后取消勾选再发布）。仓库目前是 private，所以 workflow 没有使用 `--provenance`；仓库公开后可以加回。
+
 ## License
 
 Apache-2.0，见 [LICENSE](LICENSE)。
