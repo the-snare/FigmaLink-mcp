@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>FigmaLink <span id="ver" class="muted"></span></h1>
+      <span id="target" class="muted" data-i18n="target.notConnected">not connected</span>
+      <button id="lang" class="ghost tip" data-i18n-tip="btn.lang.tip" data-tip="Switch interface language">中文</button>
+    </header>
+
+    <section class="group">
+      <h2 data-i18n="group.link">Link · local MCP bridge ↔ extension</h2>
+      <div class="field">
+        <label for="wsUrl" class="tip" data-i18n="field.url" data-i18n-tip="field.url.tip"
+          data-tip="Address of the local MCP bridge. Default ws://127.0.0.1:1210">URL</label>
+        <input id="wsUrl" type="text" placeholder="ws://127.0.0.1:1210" />
+      </div>
+      <div class="field">
+        <label for="token" class="tip" data-i18n="field.token" data-i18n-tip="field.token.tip"
+          data-tip="Pairing token: printed to the bridge stderr at startup, also kept in bridge/pairing.json">Token</label>
+        <input id="token" type="text" data-i18n-placeholder="field.token.ph" placeholder="paste token" />
+      </div>
+      <div class="row">
+        <button id="savePair" class="primary icon tip" data-i18n-aria="btn.save.aria" aria-label="Save and reconnect"
+          data-i18n-tip="btn.save.tip" data-tip="Save URL + token, then push them to the offscreen socket and reconnect">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 3v5" /><path d="M15 3v5" />
+            <path d="M6 8h12v3a6 6 0 0 1-12 0V8Z" /><path d="M12 17v4" />
+          </svg>
+        </button>
+        <button id="refreshStatus" class="icon tip" data-i18n-aria="btn.refresh.aria" aria-label="Read link status"
+          data-i18n-tip="btn.refresh.tip" data-tip="Read link status now — this popup never refreshes itself">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" /><path d="M3.5 3.5v5h5" />
+          </svg>
+        </button>
+        <button id="release" class="icon tip" data-i18n-aria="btn.release.aria" aria-label="Release debugger"
+          data-i18n-tip="btn.release.tip" data-tip="Detach the debugger from every Figma tab — usually unnecessary, it also drops itself after 3 min idle">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 3v4.5" /><path d="M15 3v4.5" />
+            <path d="M6 7.5h12v2.8a6 6 0 0 1-12 0V7.5Z" /><path d="M12 16.5v4" />
+            <path d="M3.5 20.5 20.5 3.5" />
+          </svg>
+        </button>
+        <button id="reloadExt" class="icon tip" data-i18n-aria="btn.reload.aria" aria-label="Reload extension"
+          data-i18n-tip="btn.reload.tip" data-tip="Reload the extension from disk — it also does this by itself within ~20s once manifest.json version moves">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3v10" /><path d="M8 9.5l4 4 4-4" />
+            <path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+          </svg>
+        </button>
+        <button id="statusToggle" class="ghost tip" aria-expanded="false" aria-controls="link"
+          data-i18n="btn.status" data-i18n-tip="btn.status.tip" data-tip="Show or hide the raw status JSON">Status</button>
+      </div>
+      <pre id="link" hidden>// status not read yet.</pre>
+    </section>
+
+    <div id="tooltip" role="tooltip" hidden></div>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

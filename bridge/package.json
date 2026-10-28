@@ -1,0 +1,61 @@
+{
+  "name": "figmalink-mcp",
+  "version": "0.26.0",
+  "description": "MCP server (stdio) facing the agent, WebSocket server (127.0.0.1) facing the FigmaLink browser extension, which drives the live Figma canvas.",
+  "type": "module",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-snare/FigmaLink-mcp.git",
+    "directory": "bridge"
+  },
+  "homepage": "https://github.com/the-snare/FigmaLink-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/the-snare/FigmaLink-mcp/issues"
+  },
+  "engines": {
+    "node": ">=20.11"
+  },
+  "bin": {
+    "figmalink-mcp": "./dist/cli.js",
+    "figmalink-drive": "./dist/drive.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "drive": "node dist/drive.js",
+    "test": "npm run build && node test/loop-test.mjs && node test/link-test.mjs",
+    "prepublishOnly": "npm run clean && npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "figma",
+    "model-context-protocol",
+    "chrome-extension",
+    "design-automation"
+  ],
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

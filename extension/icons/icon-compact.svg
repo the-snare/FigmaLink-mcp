@@ -1,0 +1,35 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- 16px 专用简化版：全尺寸稿里的细连线和 F 色块缩到 16px 会糊成一团，
+       所以只保留节点网格 + 中心焦点，笔画加粗到可分辨的宽度。 -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3488ff"/>
+      <stop offset="100%" stop-color="#7b3fe4"/>
+    </linearGradient>
+    <radialGradient id="pinkDot">
+      <stop offset="0%" stop-color="#ff82b8"/>
+      <stop offset="100%" stop-color="#ff4785"/>
+    </radialGradient>
+    <radialGradient id="cyanDot">
+      <stop offset="0%" stop-color="#73f0ff"/>
+      <stop offset="100%" stop-color="#22d8e8"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="4" y="4" width="248" height="248" rx="44" fill="url(#bgGrad)" />
+
+  <path d="M48 48 H208 V208 H48 V48" fill="none" stroke="#9fdcff" stroke-width="14" stroke-linecap="round"/>
+  <path d="M128 48 V208" fill="none" stroke="#9fdcff" stroke-width="14" stroke-linecap="round"/>
+  <path d="M48 128 H208" fill="none" stroke="#9fdcff" stroke-width="14" stroke-linecap="round"/>
+
+  <circle cx="48" cy="48" r="24" fill="url(#pinkDot)"/>
+  <circle cx="128" cy="48" r="24" fill="#ffffff"/>
+  <circle cx="208" cy="48" r="24" fill="#ffffff"/>
+  <circle cx="48" cy="128" r="24" fill="#ffffff"/>
+  <circle cx="208" cy="128" r="24" fill="#ffffff"/>
+  <circle cx="48" cy="208" r="24" fill="#40b8ff"/>
+  <circle cx="128" cy="208" r="24" fill="url(#cyanDot)"/>
+  <circle cx="208" cy="208" r="24" fill="url(#cyanDot)"/>
+
+  <circle cx="128" cy="128" r="38" fill="url(#pinkDot)"/>
+</svg>

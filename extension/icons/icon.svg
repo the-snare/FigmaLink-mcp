@@ -1,0 +1,53 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 背景蓝紫渐变 -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3488ff"/>
+      <stop offset="100%" stop-color="#7b3fe4"/>
+    </linearGradient>
+    <!-- F图形渐变 -->
+    <linearGradient id="fGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4096ff"/>
+      <stop offset="100%" stop-color="#b76cf0"/>
+    </linearGradient>
+    <!-- 彩色圆点渐变 -->
+    <radialGradient id="pinkDot">
+      <stop offset="0%" stop-color="#ff82b8"/>
+      <stop offset="100%" stop-color="#ff4785"/>
+    </radialGradient>
+    <radialGradient id="cyanDot">
+      <stop offset="0%" stop-color="#73f0ff"/>
+      <stop offset="100%" stop-color="#22d8e8"/>
+    </radialGradient>
+    <radialGradient id="orangeDot">
+      <stop offset="0%" stop-color="#ffb066"/>
+      <stop offset="100%" stop-color="#ff7a2e"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 圆角背景底板 -->
+  <rect x="4" y="4" width="248" height="248" rx="40" fill="url(#bgGrad)" />
+
+  <!-- MCP 连接线 -->
+  <path d="M48 48 H208 V208 H48 V48" fill="none" stroke="#87cfff" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M128 48 V208" fill="none" stroke="#87cfff" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M48 128 H208" fill="none" stroke="#87cfff" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- 外围节点 -->
+  <circle cx="48" cy="48" r="12" fill="url(#pinkDot)"/>
+  <circle cx="128" cy="48" r="12" fill="#ffffff"/>
+  <circle cx="208" cy="48" r="12" fill="#ffffff"/>
+  <circle cx="48" cy="128" r="12" fill="#ffffff"/>
+  <circle cx="208" cy="128" r="12" fill="#ffffff"/>
+  <circle cx="48" cy="208" r="12" fill="#40b8ff"/>
+  <circle cx="128" cy="208" r="12" fill="url(#cyanDot)"/>
+  <circle cx="208" cy="208" r="12" fill="#22d8e8"/>
+  <circle cx="128" cy="128" r="5" fill="#48e0f0"/>
+
+  <!-- 中心抽象 F 图形（Figma风格） -->
+  <path d="M80 180 C90 130, 110 100, 145 100 C175 100, 190 115, 190 135 C190 155, 170 168, 142 168 L100 168 L92 182 Z" fill="url(#fGrad)" opacity="0.9"/>
+  <path d="M90 110 C100 75, 130 60, 170 60 C195 60, 205 75, 200 98 C195 118, 170 130, 140 130 L105 130 Z" fill="url(#fGrad)" opacity="0.85"/>
+  <circle cx="110" cy="110" r="26" fill="url(#pinkDot)"/>
+  <circle cx="172" cy="142" r="24" fill="url(#cyanDot)"/>
+  <circle cx="172" cy="130" r="14" fill="url(#orangeDot)"/>
+</svg>

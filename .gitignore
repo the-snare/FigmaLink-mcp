@@ -1,0 +1,21 @@
+# 依赖
+node_modules/
+
+# 构建产物
+bridge/dist/
+
+# 本机凭据与运行产物 —— 绝不入库
+bridge/pairing.json
+bridge/out/
+bridge/tmp/
+bridge/test/tmp/
+extension/tools/tmp/
+
+# 杂项
+*.log
+*.bin
+.DS_Store
+Thumbs.db
+
+# 工具状态目录
+.agents/
