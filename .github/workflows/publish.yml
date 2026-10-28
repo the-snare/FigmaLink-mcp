@@ -25,13 +25,15 @@ jobs:
       # Tag push publishes for real. A manual run defaults to dry-run so clicking the
       # button cannot accidentally release a version.
       DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'false' }}
+      NPM_CONFIG_REGISTRY: https://registry.npmjs.org
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          registry-url: https://registry.npmjs.org
+          # Do NOT pass registry-url here: setup-node v4 then exports a dummy
+          # NODE_AUTH_TOKEN (XXXXX-...), which makes npm use token auth and skip OIDC.
           cache: npm
           cache-dependency-path: bridge/package-lock.json
 
