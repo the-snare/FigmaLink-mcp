@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "FigmaLink",
   "description": "Companion extension for the figmalink-mcp server: it pairs with a local loopback bridge and drives the Figma canvas through the DevTools Protocol. Ships unpaired and does nothing until you point it at your own MCP server.",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "permissions": ["debugger", "activeTab", "storage", "offscreen"],
   "host_permissions": ["https://www.figma.com/*"],
   "background": { "service_worker": "background/sw.js", "type": "module" },

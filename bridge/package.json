@@ -1,6 +1,6 @@
 {
   "name": "figmalink-mcp",
-  "version": "0.26.0",
+  "version": "0.26.1",
   "description": "MCP server (stdio) facing the agent, WebSocket server (127.0.0.1) facing the FigmaLink browser extension, which drives the live Figma canvas.",
   "type": "module",
   "license": "Apache-2.0",
